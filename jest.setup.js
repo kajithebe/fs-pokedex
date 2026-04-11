@@ -1,4 +1,6 @@
-const { TextEncoder, TextDecoder } = require('util')
+/* eslint-disable no-undef */
+const {TextEncoder, TextDecoder} = require('util');
 
-global.TextEncoder = TextEncoder
-global.TextDecoder = TextDecoder
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+/* eslint-enable no-undef */
