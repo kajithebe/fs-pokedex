@@ -26,4 +26,15 @@ module.exports = {
     'no-console': 'error',
     'react/prop-types': 0,
   },
+  overrides: [
+    {
+      files: ['jest.setup.js', 'playwright.config.js', 'e2e-tests/**/*.js'],
+      env: {
+        node: true,
+      },
+      parserOptions: {
+        sourceType: 'script',
+      },
+    },
+  ],
 };
