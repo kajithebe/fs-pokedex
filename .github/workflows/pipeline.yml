@@ -9,7 +9,7 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  simple_deployment_pipeline:
+  build_and_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,9 +28,6 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run e2e tests
         run: npm run test:e2e
-      - name: Trigger deployment
-        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
-        run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
       - name: Notify Discord on failure
         if: failure()
         uses: sarisia/actions-status-discord@v1
@@ -45,8 +42,16 @@ jobs:
             Message: ${{ github.event.commits[0].message }}
             Author: ${{ github.event.commits[0].author.name }}
 
+  deploy:
+    needs: [build_and_test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger deployment
+        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+        run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
+
   tag_release:
-    needs: [simple_deployment_pipeline]
+    needs: [deploy]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
